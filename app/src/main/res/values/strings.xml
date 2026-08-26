@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bàn phím Pro</string>
+    <string name="ime_name">Bàn phím Pro</string>
+    <string name="settings">Cài đặt</string>
+    <string name="theme_settings">Giao diện</string>
+    <string name="clipboard_history">Lịch sử clipboard</string>
+    <string name="enable_ime">Bật bàn phím trong hệ thống</string>
+    <string name="pick_ime">Chọn bàn phím đang dùng</string>
+    <string name="open_settings">Mở cài đặt chi tiết</string>
+    <string name="howto">1. Bật bàn phím trong Cài đặt\n2. Chọn làm bàn phím hiện tại\n3. Gõ thử bên dưới</string>
+</resources>

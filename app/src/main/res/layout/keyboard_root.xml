@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/imeRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Background image layer -->
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
+    <!-- Color overlay for opacity control -->
+    <View
+        android:id="@+id/bgOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/keyboard_bg" />
+
+    <LinearLayout
+        android:id="@+id/contentColumn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Toolbar Gboard-style -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:scrollbars="none"
+            android:background="@color/toolbar_bg">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+
+                <TextView android:id="@+id/btnToolbarSelectAll" style="@style/KbToolbarBtn" android:text="All"/>
+                <TextView android:id="@+id/btnToolbarCopy" style="@style/KbToolbarBtn" android:text="Copy"/>
+                <TextView android:id="@+id/btnToolbarPaste" style="@style/KbToolbarBtn" android:text="Paste"/>
+                <TextView android:id="@+id/btnToolbarClip" style="@style/KbToolbarBtn" android:text="📋"/>
+                <TextView android:id="@+id/btnToolbarEmoji" style="@style/KbToolbarBtn" android:text="😊"/>
+                <TextView android:id="@+id/btnToolbarMic" style="@style/KbToolbarBtn" android:text="🎤"/>
+                <TextView android:id="@+id/btnToolbarOneHand" style="@style/KbToolbarBtn" android:text="☝️"/>
+                <TextView android:id="@+id/btnToolbarFloat" style="@style/KbToolbarBtn" android:text="⧉"/>
+                <TextView android:id="@+id/btnToolbarCalc" style="@style/KbToolbarBtn" android:text="🧮"/>
+                <TextView android:id="@+id/btnHide" style="@style/KbToolbarBtn" android:text="▼"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- One-hand side controls -->
+        <LinearLayout
+            android:id="@+id/oneHandBar"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            android:background="@color/toolbar_bg">
+            <TextView android:id="@+id/btnOhLeft" android:layout_width="0dp" android:layout_height="match_parent"
+                android:layout_weight="1" android:gravity="center" android:text="◀ Trái" android:textSize="13sp"/>
+            <TextView android:id="@+id/btnOhFull" android:layout_width="0dp" android:layout_height="match_parent"
+                android:layout_weight="1" android:gravity="center" android:text="Full" android:textSize="13sp" android:textStyle="bold"/>
+            <TextView android:id="@+id/btnOhRight" android:layout_width="0dp" android:layout_height="match_parent"
+                android:layout_weight="1" android:gravity="center" android:text="Phải ▶" android:textSize="13sp"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/panelContainer"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:visibility="gone" />
+
+        <!-- Keyboard rows wrapper for one-hand width -->
+        <LinearLayout
+            android:id="@+id/keyboardAlign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/keyboardArea"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:orientation="vertical"
+                android:padding="5dp">
+                <LinearLayout
+                    android:id="@+id/rowsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
