@@ -86,9 +86,12 @@ class AdvancedIME : InputMethodService() {
 
     override fun onCreateInputView(): View {
         root = layoutInflater.inflate(R.layout.keyboard_root, null)
+        // Nền cửa sổ IME không trong suốt → tránh khoảng trống lộ activity phía dưới
+        window?.window?.setBackgroundDrawableResource(R.color.keyboard_bg)
         bindToolbar()
         applyBackground()
         applyOneHandLayout()
+        applyHeight()
         rebuildKeyboard()
         return root!!
     }
@@ -98,10 +101,30 @@ class AdvancedIME : InputMethodService() {
         engine.mode = if (isSecureEditor()) VietnameseEngine.Mode.OFF else prefs.inputMode
         engine.reset(); composingLen = 0
         panelMode = Panel.NONE
+        // Tắt floating mỗi lần mở lại để tránh bàn phím bị kéo lệch
+        if (prefs.floating) {
+            prefs.floating = false
+        }
+        root?.findViewById<View>(R.id.contentColumn)?.apply {
+            translationX = 0f
+            translationY = 0f
+            setOnTouchListener(null)
+        }
         applyBackground()
         applyOneHandLayout()
         applyHeight()
         rebuildKeyboard()
+    }
+
+    override fun onComputeInsets(outInsets: InputMethodService.Insets) {
+        super.onComputeInsets(outInsets)
+        val r = root ?: return
+        // Content nằm ngay trên bàn phím, không chừa khoảng trống trong vùng IME
+        outInsets.contentTopInsets = outInsets.visibleTopInsets
+        outInsets.touchableInsets = InputMethodService.Insets.TOUCHABLE_INSETS_CONTENT
+        val loc = IntArray(2)
+        r.getLocationInWindow(loc)
+        outInsets.touchableRegion.set(0, loc[1], r.width, loc[1] + r.height)
     }
 
     private fun isSecureEditor(): Boolean {
@@ -218,9 +241,14 @@ class AdvancedIME : InputMethodService() {
 
     private fun applyHeight() {
         val kb = root?.findViewById<View>(R.id.keyboardArea) ?: return
-        val h = when (prefs.heightLevel) { 0 -> 220; 2 -> 320; else -> 270 }
-        kb.layoutParams = kb.layoutParams.apply {
-            height = (h * resources.displayMetrics.density).toInt()
+        val hDp = when (prefs.heightLevel) { 0 -> 220; 2 -> 320; else -> 270 }
+        val hPx = (hDp * resources.displayMetrics.density).toInt()
+        val lp = kb.layoutParams
+        if (lp.height != hPx) {
+            lp.height = hPx
+            kb.layoutParams = lp
+            kb.requestLayout()
+            root?.requestLayout()
         }
     }
 
@@ -251,33 +279,37 @@ class AdvancedIME : InputMethodService() {
         val r = root ?: return
         val panel = r.findViewById<FrameLayout>(R.id.panelContainer)
         val rows = r.findViewById<LinearLayout>(R.id.rowsContainer) ?: return
+        val kbArea = r.findViewById<View>(R.id.keyboardArea)
         rows.removeAllViews()
         panel?.removeAllViews()
         panel?.visibility = View.GONE
+        panel?.layoutParams = panel?.layoutParams?.apply { height = 0 }
 
         when (panelMode) {
-            Panel.EMOJI -> {
+            Panel.EMOJI, Panel.CLIP, Panel.CALC -> {
+                val panelH = (260 * resources.displayMetrics.density).toInt()
+                panel?.layoutParams = panel?.layoutParams?.apply { height = panelH }
                 panel?.visibility = View.VISIBLE
-                panel?.addView(buildEmojiPanel())
+                kbArea?.visibility = View.GONE
+                when (panelMode) {
+                    Panel.EMOJI -> panel?.addView(buildEmojiPanel())
+                    Panel.CLIP -> panel?.addView(buildClipPanel())
+                    Panel.CALC -> panel?.addView(buildCalcPanel())
+                    else -> {}
+                }
+                r.requestLayout()
                 return
             }
-            Panel.CLIP -> {
-                panel?.visibility = View.VISIBLE
-                panel?.addView(buildClipPanel())
-                return
+            else -> {
+                kbArea?.visibility = View.VISIBLE
             }
-            Panel.CALC -> {
-                panel?.visibility = View.VISIBLE
-                panel?.addView(buildCalcPanel())
-                return
-            }
-            else -> {}
         }
 
         val layout = if (symbolMode) symbols else qwerty
         val start = if (prefs.showNumberRow) 0 else 1
         for (i in start until layout.size) rows.addView(buildRow(layout[i]))
         if (prefs.showArrowKeys) rows.addView(buildRow(listOf("←","↑","↓","→")))
+        r.requestLayout()
     }
 
     private fun buildRow(keys: List<String>): LinearLayout {

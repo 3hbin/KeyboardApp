@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/imeRoot"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/keyboard_bg">
 
     <!-- Background image layer -->
     <ImageView
@@ -23,7 +24,8 @@
         android:id="@+id/contentColumn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/keyboard_bg">
 
         <!-- Toolbar Gboard-style -->
         <HorizontalScrollView
@@ -72,7 +74,8 @@
         <FrameLayout
             android:id="@+id/panelContainer"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="wrap_content"
+            android:minHeight="0dp"
             android:visibility="gone" />
 
         <!-- Keyboard rows wrapper for one-hand width -->
@@ -88,7 +91,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:background="@color/keyboard_bg">
                 <LinearLayout
                     android:id="@+id/rowsContainer"
                     android:layout_width="match_parent"
