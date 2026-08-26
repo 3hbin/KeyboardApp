@@ -424,18 +424,17 @@ class AdvancedIME : InputMethodService() {
             "↑" -> sendDownUp(KeyEvent.KEYCODE_DPAD_UP)
             "↓" -> sendDownUp(KeyEvent.KEYCODE_DPAD_DOWN)
             else -> {
-                var text = displayLabel(key).ifBlank { key }
+                val text = displayLabel(key).ifBlank { key }
                 val ch = text.firstOrNull()
                 // Telex: chữ cái | VNI: chữ cái + số 1-9 (dấu/mũ)
-                val shouldCompose = !symbolMode && !isSecureEditor() && ch != null && (
+                val canCompose = ch != null && !symbolMode && !isSecureEditor() && (
                     ch.isLetter() ||
                     (engine.mode == VietnameseEngine.Mode.VNI && ch in '1'..'9')
                 )
-                if (shouldCompose) {
+                if (canCompose && ch != null) {
                     if (composingLen > 0) ic.deleteSurroundingText(composingLen, 0)
                     val composed = maybeAutoCap(engine.process(ch))
                     ic.commitText(composed, 1)
-                    // Tiếp tục composing nếu còn là chữ/số tone; kết thúc khi không còn buffer
                     composingLen = if (engine.current().isNotEmpty()) composed.length else 0
                 } else {
                     finishComposing(); ic.commitText(text, 1)
